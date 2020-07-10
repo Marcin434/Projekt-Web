@@ -237,7 +237,7 @@ class GameLoop{
   }
 
   getRandomShape(): number[][]{
-    let r = Math.round(Math.random()*7)
+    let r = Math.round(Math.random()*6)
     switch(r){
     case 0: 
       return [
@@ -284,6 +284,12 @@ class GameLoop{
     ]
     }
   }
+  getRandomColor(): string{
+    let color = Math.floor(Math.random()*16777215).toString(16);
+
+    return "#"+color
+  }
+  
 }
 
 const app = new App
