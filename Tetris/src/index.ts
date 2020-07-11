@@ -40,7 +40,6 @@ class App{
     let gameLoop = new GameLoop(gameCanvas, this.boardWidth, this.boardHeight);
     startButton.addEventListener("click", () => {this.onStart(gameLoop)});
     document.addEventListener("keypress", (key) => {this.onKeyPress(key, gameLoop)});
-
   }
 
   onStart(gameLoop: GameLoop){
@@ -79,7 +78,7 @@ class GameCanvas{
     for(let i = 0; i<block.shape.length;i++){
       for(let j = 0; j<block.shape.length; j++){
         if(block.shape[j][i]!= 0){
-          this.ctx.fillStyle = "#00FF00"
+          this.ctx.fillStyle = block.color
           this.ctx.fillRect((i+block.position.x) * 20, (j + Math.round(block.position.y))* 20, 20, 20)
         }
       }
@@ -94,7 +93,7 @@ class GameCanvas{
           this.ctx.fillRect(i * 20 , j * 20, 20, 20)
           
         }else{
-          this.ctx.fillStyle = "#00FF00"
+          this.ctx.fillStyle = boardMatrix[j][i]
           this.ctx.fillRect(i * 20 , j * 20, 20, 20)
           
         }
@@ -102,10 +101,11 @@ class GameCanvas{
     }
     
   }
-  updateBoard(block: Block, boardMatrix: string[][], activeBlock?: Block){
+  updateBoard(block: Block, boardMatrix: string[][]){
     
     this.drawBoard(boardMatrix)
     this.drawBlock(block)
+    
 
   }
 }
@@ -149,6 +149,7 @@ class GameLoop{
       ["0","0","0","0","0","0","0","0","0","0",],
       ["0","0","0","0","0","0","0","0","0","0",],
       ["0","0","0","0","0","0","0","0","0","0",],
+      ["0","0","0","0","0","0","0","0","0","0",]
     ]
 
     this.activeBlock =this.getRandomBlock();
@@ -160,9 +161,11 @@ class GameLoop{
   loop(){
     setInterval(() =>{
     if(this.canMoveDown()){
+        
         this.moveBlock()
 
     }else{
+      this.updateBoardMatrix()
       this.activeBlock = this.getRandomBlock()
 
     }
@@ -176,7 +179,7 @@ class GameLoop{
     let pos:BlockPosition = new BlockPosition
     pos.y = 0
     pos.x = 4
-    let b = new Block("#0000FF", pos,this.getRandomShape());
+    let b = new Block(this.getRandomColor(), pos,this.getRandomShape());
     return b
   }
   moveBlock(){
@@ -188,32 +191,23 @@ class GameLoop{
 
     for(let i = 0; i<this.activeBlock.shape.length;i++){
       for(let j = 0; j<this.activeBlock.shape.length; j++){
-        if(this.activeBlock.shape[j][i]!= 0 && i+this.activeBlock.position.y > 20){
-          for(let i = 0; i<this.activeBlock.shape.length;i++){
-            for(let j = 0; j<this.activeBlock.shape.length; j++){
-              if(this.activeBlock.shape[j][i]!= 0){
-                this.boardMatrix[j+Math.round(this.activeBlock.position.y)][i+this.activeBlock.position.x] = "1";
-    
-              }
-            }
-          }          
-          return false
-        }
-
-        if(this.activeBlock.shape[j][i]!= 0 && this.boardMatrix[j+Math.round(this.activeBlock.position.y)][i+this.activeBlock.position.x] != "0"){
-          for(let i = 0; i<this.activeBlock.shape.length;i++){
-            for(let j = 0; j<this.activeBlock.shape.length; j++){
-              if(this.activeBlock.shape[j][i]!= 0){
-                this.boardMatrix[j+Math.round(this.activeBlock.position.y)-1][i+this.activeBlock.position.x] = "1";
-    
-              }
-            }
-          }
+        if(this.activeBlock.shape[j][i]!= 0 && i + Math.round(this.activeBlock.position.y) > 20 ||
+          this.activeBlock.shape[j][i]!= 0 && this.boardMatrix[j+Math.round(this.activeBlock.position.y)][i+this.activeBlock.position.x] != "0"){
           return false
         }
       }
     }
     return true
+  }
+
+  updateBoardMatrix(){
+    for(let i = 0; i<this.activeBlock.shape.length;i++){
+      for(let j = 0; j<this.activeBlock.shape.length; j++){
+        if(this.activeBlock.shape[j][i]!= 0){
+          this.boardMatrix[j+Math.round(this.activeBlock.position.y)-1][i+this.activeBlock.position.x] = this.activeBlock.color;
+        }
+      }
+    }
   }
 
   moveLeft(){
