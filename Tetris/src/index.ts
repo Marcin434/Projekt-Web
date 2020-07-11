@@ -200,16 +200,6 @@ class GameLoop{
     return true
   }
 
-  updateBoardMatrix(){
-    for(let i = 0; i<this.activeBlock.shape.length;i++){
-      for(let j = 0; j<this.activeBlock.shape.length; j++){
-        if(this.activeBlock.shape[j][i]!= 0){
-          this.boardMatrix[j+Math.round(this.activeBlock.position.y)-1][i+this.activeBlock.position.x] = this.activeBlock.color;
-        }
-      }
-    }
-  }
-
   moveLeft(){
     this.activeBlock.position.x--
   }
@@ -282,6 +272,16 @@ class GameLoop{
     let color = Math.floor(Math.random()*16777215).toString(16);
 
     return "#"+color
+  }
+
+  updateBoardMatrix(){
+    for(let i = 0; i<this.activeBlock.shape.length;i++){
+      for(let j = 0; j<this.activeBlock.shape.length; j++){
+        if(this.activeBlock.shape[j][i]!= 0){
+          this.boardMatrix[j+Math.round(this.activeBlock.position.y)-1][i+this.activeBlock.position.x] = this.activeBlock.color;
+        }
+      }
+    }
   }
   
 }
